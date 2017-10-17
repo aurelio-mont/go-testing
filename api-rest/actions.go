@@ -32,11 +32,17 @@ func responseMovies(w http.ResponseWriter, status int, results Movies)  {
 	json.NewEncoder(w).Encode(results)
 }
 
+func responsePerson(w http.ResponseWriter, status int, results Person)  {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(status)
+	json.NewEncoder(w).Encode(results)
+}
+
 var collection = getSession().DB("curso_go").C("movies")
 
 
 func Index(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Hola Mundo desdemi servidor web con Go")
+	fmt.Fprintf(w, "Hola Mundo desde mi servidor web con Go")
 }
 
 func MovieLits(w http.ResponseWriter, r *http.Request) {
@@ -160,4 +166,30 @@ func MovieRemove(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(200)
 	json.NewEncoder(w).Encode(results)
+}
+
+var peesons = getSession().DB("curso_go").C("persons")
+
+
+func PersonAdd(w http.ResponseWriter, r *http.Request) {
+	decoder := json.NewDecoder(r.Body)
+
+	var person_data Person
+
+	err := decoder.Decode(&person_data)
+
+	if err != nil {
+		panic(err)
+	}
+
+	defer r.Body.Close()
+
+	err = peesons.Insert(person_data)
+
+	if err != nil {
+		w.WriteHeader(500)
+		return
+	}
+
+	responsePerson(w, 200, person_data)
 }

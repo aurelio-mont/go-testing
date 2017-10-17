@@ -65,4 +65,10 @@ var routes = Routes{
 		"/pelicula/{id}",
 		MovieRemove,
 	},
+	Route{
+		"PersonAdd",
+		"POST",
+		"/person",
+		PersonAdd,
+	},
 }
